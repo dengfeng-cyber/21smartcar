@@ -1,1 +1,5 @@
+1.串级pid学习
 https://blog.csdn.net/skythinker616/article/details/123019829?ops_request_misc=elastic_search_misc&request_id=ea78be9b5207d506ce2938bbfc64f9c6&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-123019829-null-null.142^v102^pc_search_result_base3&utm_term=pid&spm=1018.2226.3001.4187
+
+2.位置pid和增量pid
+https://blog.csdn.net/rank_fei/article/details/142031918?ops_request_misc=elastic_search_misc&request_id=ea78be9b5207d506ce2938bbfc64f9c6&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-2-142031918-null-null.142^v102^pc_search_result_base3&utm_term=pid&spm=1018.2226.3001.4187
