@@ -1,0 +1,54 @@
+# Untitled - By: 11502 - 周三 4月 1 2026
+
+import sensor, image, tf, time
+
+# 初始化摄像头
+sensor.reset()
+sensor.set_pixformat(sensor.RGB565)
+sensor.set_framesize(sensor.QVGA)
+sensor.skip_frames(time=2000)
+
+# 加载三个模型（需放入SD卡）
+detector = tf.load("yolo_box.tflite", load_to_fb=True)      # 目标检测：定位箱子
+digit_net = tf.load("digit_cls.tflite", load_to_fb=True)    # 模型1：识别数字0-9
+char_net = tf.load("char_cls.tflite", load_to_fb=True)      # 模型2：识别角色
+
+# 角色到数字的映射表（根据比赛规则）
+char_to_digit = {
+    "mickey": 0,      # 米老鼠 -> 0
+    "pikachu": 1,     # 皮卡丘 -> 1
+    "spongebob": 2,   # 海绵宝宝 -> 2
+    "pleasant": 3,    # 喜羊羊 -> 3
+    "donald": 4,      # 唐老鸭 -> 4
+    "nezha": 5,       # 哪吒 -> 5
+    "datou": 6,       # 大头儿子 -> 6
+    "ggbond": 7,      # 猪猪侠 -> 7
+    "huluwa": 8,      # 葫芦娃 -> 8
+    "wolffy": 9       # 灰太狼 -> 9
+}
+
+while True:
+    img = sensor.snapshot()
+
+    # 1. 目标检测获取箱子位置
+    objects = detector.detect(img, threshold=0.5)
+
+    for obj in objects:
+        x, y, w, h = obj.rect()
+
+        # 优先使用数字模型识别
+        digit_res = digit_net.classify(img, roi=(x, y, w, h))
+        if digit_res:
+            label, conf = max(digit_res, key=lambda x: x[1])
+            if conf > 0.6 and label.isdigit():
+                print(int(label))
+                continue
+
+        # 若数字识别失败，使用角色模型
+        char_res = char_net.classify(img, roi=(x, y, w, h))
+        if char_res:
+            label, conf = max(char_res, key=lambda x: x[1])
+            if conf > 0.6 and label in char_to_digit:
+                print(char_to_digit[label])
+
+    time.sleep_ms(50)
