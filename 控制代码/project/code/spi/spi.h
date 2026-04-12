@@ -3,11 +3,11 @@
 
 #include "zf_common_headfile.h"
 
-//#define WIFI_SSID_TEST          "ybh"
-//#define WIFI_PASSWORD_TEST      "han92400" 
+#define WIFI_SSID_TEST          "ybh"
+#define WIFI_PASSWORD_TEST      "han92400" 
 
-#define WIFI_SSID_TEST          "lzc"
-#define WIFI_PASSWORD_TEST      "LZC20060804" 
+//#define WIFI_SSID_TEST          "lzc"
+//#define WIFI_PASSWORD_TEST      "LZC20060804" 
 
  void printdata_8(float data0,float data1,float data2,float data3,float data4,float data5,float data6,float data7);
  void printdata_7(float data0,float data1,float data2,float data3,float data4,float data5,float data6);

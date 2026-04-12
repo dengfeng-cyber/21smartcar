@@ -2,9 +2,11 @@
 #include "math.h"
 #include "imu660ra.h"
 #include "spi.h"
+#include "kaerman.h"
+
+
 #define isZero_Bias		1	//是否开启零漂，0-关闭， 1-开启
 //float imu660ra_angle=0;
-
 gyro_param_t Gyro_Bias;    //陀螺仪零飘
 gyro_param_t Gyro_Angle;   //陀螺仪实时角度
 gyro_param_t Acc_Angle;
@@ -12,7 +14,7 @@ gyro_param_t Fusion_Angle;	//数据融合后角度
 float tra_acc_x, tra_acc_y, tra_acc_z, tra_gyro_x,tra_gyro_y, tra_gyro_z;//转换为度每秒后的角速度
 float K = 0.1f;	//互补滤波系数
 
-void imu660_zeroBias(void)//陀螺仪零漂
+void imu660_zeroBias()//陀螺仪零漂
 {
 #if(isZero_Bias)
 	if(isZero_Bias)
@@ -25,7 +27,7 @@ void imu660_zeroBias(void)//陀螺仪零漂
 			system_delay_ms(5);
 		}		
 	}
-	Gyro_Bias.Zdata /= 500;//取平均数
+	Gyro_Bias.Zdata /= 500;//取平均数,即零漂值
 #endif	
 
 }
@@ -84,11 +86,13 @@ void pit_handler_imu660ra()
 //	imu660ra_get_acc();
 //	imu660ra_get_gyro();
 //	imu660ra_read_angle();
+	static float a=0;
 	imu660ra_get_acc();
 	imu660ra_get_gyro();      
   tra_gyro_z = imu660ra_gyro_transition(imu660ra_gyro_z);//转换为度每秒后的角速度
 	tra_gyro_y = imu660ra_gyro_transition(imu660ra_gyro_y);
-	Gyro_Angle.Zdata += (tra_gyro_z*0.005-Gyro_Bias.Zdata)*5;
+	a=tra_gyro_z*0.005-Gyro_Bias.Zdata;
+	Gyro_Angle.Zdata += Kalman_Get(&kf5,a);
 	Gyro_Angle.Ydata += (tra_gyro_y*0.005-Gyro_Bias.Ydata);
 //	printdata_2(tra_gyro_z,Gyro_Angle.Zdata);
 }

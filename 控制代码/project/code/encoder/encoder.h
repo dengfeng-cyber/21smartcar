@@ -22,22 +22,20 @@
 #define ENCODER_4_B                 (QTIMER2_ENCODER1_CH2_C4)
 
 
-#define mm1       
-#define mm2
-#define mm3
-#define mm4
 
 extern int16_t encoder_data_1;
 extern int16_t encoder_data_2;
 extern int16_t encoder_data_3;
 extern int16_t encoder_data_4;
-
-extern int16_t location1;
-extern int16_t location2;
-extern int16_t location3;
-extern int16_t location4;
+extern int16_t location_x;
+extern int16_t location_y;
+extern float encoder_speed1;
+extern float encoder_speed2;
+extern float encoder_speed3;
+extern float encoder_speed4;
 
 void my_encoder_init(void);
 void pit_handler_encoder(void);
+void get_speed(float speed);
 
 #endif

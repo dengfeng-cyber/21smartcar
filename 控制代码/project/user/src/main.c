@@ -40,6 +40,8 @@
 #include "spi.h"
 #include "motor.h"
 #include "imu660ra.h"
+#include "kaerman.h"
+#include "uart.h"
 
 // 打开新的工程或者工程移动了位置务必执行以下操作
 // 第一步 关闭上面所有打开的文件
@@ -78,23 +80,29 @@ int main(void)
 		
 /* ------------------------------ 初始化 ------------------------------ */
 		my_encoder_init(); 
-		pid_init(&speed_pid_k1,&speed_pid_k2,&speed_pid_k3,&speed_pid_k4,&location_pid_k,&angle_pid_k);
+		pid_init(&speed_pid_k1,&speed_pid_k2,&speed_pid_k3,&speed_pid_k4,&location_pid_x_k,&location_pid_y_k,&angle_pid_k);
 	   
 		my_motor_init();
 		my_imu660ra_init();
+		my_uart_init();
+		imu660_zeroBias();
+	
 			
 		//由于connect里面有判断是否连接成功的死循环，要打开逐飞助手连接成功才能出循环
-		connect();
+//		connect();
 		
 		
 		interrupt_set_priority(LPUART8_IRQn,4);
 		interrupt_set_priority(PIT_IRQn, 0);
-		interrupt_set_priority(LPUART1_IRQn,1);
-		interrupt_set_priority(LPUART4_IRQn,2);
+		interrupt_set_priority(LPUART1_IRQn,2);
+		interrupt_set_priority(LPUART4_IRQn,1);
 		interrupt_global_enable(0);//开启中断
 		
+		Kalman_Init(3,&kf5);
     pit_ms_init(PIT_CH_encoder, 3);			//编码器
 		pit_ms_init(PIT_CH1, 5);						//陀螺仪
+		pit_ms_init(PIT_CH_location,15);		//位置环
+		
 //			car_test();
 
     // 此处编写用户代码 例如外设初始化代码等
